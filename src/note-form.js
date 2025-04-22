@@ -1,9 +1,4 @@
 class NoteForm extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" });
-  }
-
   connectedCallback() {
     this.shadowRoot.innerHTML = `
         <style>
@@ -57,23 +52,23 @@ class NoteForm extends HTMLElement {
         </form>
       `;
 
-    // Pasang event listener untuk submit form
-    this.shadowRoot
-      .querySelector("#noteForm")
-      .addEventListener("submit", (e) => {
-        e.preventDefault();
-        const title = this.shadowRoot.querySelector("#title").value;
-        const body = this.shadowRoot.querySelector("#body").value;
-        const newNote = {
-          title,
-          body,
-          createdAt: new Date().toISOString(),
-        };
-        // Pastikan fungsi addNewNoteToList sudah didefinisikan secara global
-        window.addNewNoteToList(newNote);
-        // Reset form setelah submit
-        this.shadowRoot.querySelector("#noteForm").reset();
-      });
+    // Handle form submission
+    this.querySelector("#noteForm").addEventListener(
+      "submit",
+      this.handleSubmit
+    );
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    const noteInput = this.querySelector("#noteInput");
+    const newNote = noteInput.value;
+
+    if (newNote.trim()) {
+      // You can send the new note to the API here
+      console.log("New note:", newNote);
+      noteInput.value = ""; // Clear input
+    }
   }
 }
 

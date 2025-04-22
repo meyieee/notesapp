@@ -13,12 +13,16 @@ module.exports = {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.js$/, // Adding Babel configuration for JS files
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"], // Add this to transpile modern JavaScript
+          },
+        },
+      },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "index.html"),
-      filename: "index.html",
-    }),
-  ],
 };
