@@ -1,27 +1,39 @@
 const BASE_URL = "https://notes-api.dicoding.dev/v2/";
 
 class NotesApi {
+  // Fetch all notes (non-archived)
   static fetchNotes() {
     return fetch(`${BASE_URL}/notes`)
-      .then((response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        } else {
-          return Promise.reject(new Error(`Something went wrong`));
-        }
-      })
+      .then((response) => response.json())
       .then((responseJson) => {
-        const { notes } = responseJson; // Renamed to 'notes' to match your app
-
-        if (notes && notes.length > 0) {
-          return Promise.resolve(notes);
-        } else {
-          return Promise.reject(new Error("No notes found"));
-        }
+        return responseJson.data || []; // Accessing the 'data' array containing notes
       })
       .catch((error) => {
         console.error("Error fetching notes:", error);
         return [];
+      });
+  }
+
+  // Create a new note
+  static createNote(newNote) {
+    return fetch(`${BASE_URL}/notes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newNote),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if (responseJson.status === "success") {
+          return responseJson.data; // Return the newly created note
+        } else {
+          throw new Error("Failed to create note");
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating note:", error);
+        return null;
       });
   }
 }
