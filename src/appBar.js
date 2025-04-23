@@ -1,42 +1,66 @@
 class AppBar extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
     this.shadowRoot.innerHTML = `
       <style>
+        :host {
+          display: block;
+          width: 100%;
+        }
+
         .app-bar {
-          background-color: #4CAF50;
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
           color: white;
-          padding: 10px 20px;
+          padding: 24px;
           text-align: center;
-          font-size: 1.2em; 
-          font-weight: bold;
-          border-radius: 8px 8px 0 0;
-
+          border-radius: var(--border-radius);
+          box-shadow: var(--box-shadow);
         }
 
-        .app-bar .logo {
-          font-size: 40px;  
-          font-weight: 600;
+        .logo {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 8px;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .app-bar .description {
-          font-size: 20px;  /* Menyesuaikan ukuran teks deskripsi */
-          margin-top: 5px;
-          color: #fff;
-          opacity: 0.7;
+        .description {
+          font-size: 1.1rem;
+          opacity: 0.9;
+          font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+          .app-bar {
+            padding: 16px;
+          }
+
+          .logo {
+            font-size: 2rem;
+          }
+
+          .description {
+            font-size: 1rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .logo {
+            font-size: 1.75rem;
+          }
         }
       </style>
 
       <div class="app-bar">
-        <div class="logo">Notes Application</div>
+        <div class="logo">Notes App</div>
         <div class="description">Manage your personal notes efficiently</div>
       </div>
     `;
   }
 }
 
-customElements.define("app-bar", AppBar);
+customElements.define('app-bar', AppBar);

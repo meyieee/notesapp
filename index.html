@@ -3,12 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A modern notes application to manage your personal notes efficiently"
+    />
+    <meta name="theme-color" content="#4caf50" />
     <title>Notes App</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>"
+    />
   </head>
   <body>
-    <app-bar></app-bar>
-    <note-form></note-form>
-    <div class="notes-list" id="notesList"></div>
+    <app-bar>
+      <div class="logo">Notes App</div>
+      <div class="description">Manage your personal notes efficiently</div>
+    </app-bar>
+
+    <main>
+      <note-form></note-form>
+      <div class="notes-list" id="notesList"></div>
+    </main>
 
     <script type="module" src="/src/app.js"></script>
     <!-- Menggunakan type="module" untuk memungkinkan import -->
