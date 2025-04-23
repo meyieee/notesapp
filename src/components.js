@@ -1,14 +1,14 @@
 class NoteItem extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
-    const title = this.getAttribute("title");
-    const body = this.getAttribute("body");
-    const createdAt = this.getAttribute("createdAt");
-    const noteId = this.getAttribute("id");
+    const title = this.getAttribute('title');
+    const body = this.getAttribute('body');
+    const createdAt = this.getAttribute('createdAt');
+    const noteId = this.getAttribute('id');
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -49,14 +49,20 @@ class NoteItem extends HTMLElement {
           right: 10px;
           background-color: transparent;
           border: none;
-          color: red;
+          color: #ff4444;
           font-size: 1.2rem;
           cursor: pointer;
+          padding: 5px 10px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+        }
+        .delete-btn:hover {
+          background-color: rgba(255, 68, 68, 0.1);
         }
       </style>
   
       <div class="note-item">
-        <button class="delete-btn" title="Delete Note">&times;</button>
+        <button class="delete-btn" data-id="${noteId}" title="Delete Note">&times;</button>
         <div class="title">${title}</div>
         <div class="body">${body}</div>
         <div class="createdAt">Created on: ${new Date(
@@ -65,16 +71,13 @@ class NoteItem extends HTMLElement {
       </div>
     `;
 
-    // Menambahkan event listener untuk tombol hapus
+    // Add event listener for delete button
     this.shadowRoot
-      .querySelector(".delete-btn")
-      .addEventListener("click", (e) => {
-        e.stopPropagation();
+      .querySelector('.delete-btn')
+      .addEventListener('click', () => {
         this.dispatchEvent(
-          new CustomEvent("delete-note", {
-            detail: {
-              id: noteId,
-            },
+          new CustomEvent('delete-note', {
+            detail: { id: noteId },
             bubbles: true,
             composed: true,
           })
@@ -83,4 +86,4 @@ class NoteItem extends HTMLElement {
   }
 }
 
-customElements.define("note-item", NoteItem);
+customElements.define('note-item', NoteItem);

@@ -1,51 +1,54 @@
-const BASE_URL = "https://notes-api.dicoding.dev/v2/";
+const BASE_URL = 'https://notes-api.dicoding.dev/v2';
 
 class NotesApi {
+  static BASE_URL = BASE_URL;
+
   // Fetch all notes (non-archived)
   static fetchNotes() {
-    const loadingIndicator = document.getElementById("loadingIndicator");
-    loadingIndicator.style.display = "block"; // Show loading indicator while fetching
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block'; // Show loading indicator while fetching
 
     return fetch(`${BASE_URL}/notes`)
       .then((response) => response.json())
       .then((responseJson) => {
-        loadingIndicator.style.display = "none"; // Hide loading indicator after fetching
+        loadingIndicator.style.display = 'none'; // Hide loading indicator after fetching
         return responseJson.data || []; // Accessing the 'data' array containing notes
       })
       .catch((error) => {
-        loadingIndicator.style.display = "none"; // Hide loading indicator on error
-        console.error("Error fetching notes:", error);
+        loadingIndicator.style.display = 'none'; // Hide loading indicator on error
+        console.error('Error fetching notes:', error);
         return [];
       });
   }
 
   // Create a new note
   static createNote(newNote) {
-    const loadingIndicator = document.getElementById("loadingIndicator");
-    loadingIndicator.style.display = "block"; // Show loading indicator while creating
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block'; // Show loading indicator while creating
 
-    console.log("Sending request to create note:", newNote); // Debugging log for newNote
+    console.log('Sending request to create note:', newNote); // Debugging log for newNote
 
     return fetch(`${BASE_URL}/notes`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
+        'X-Auth-Token': '12345', // Add authentication token
       },
       body: JSON.stringify(newNote),
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        loadingIndicator.style.display = "none"; // Hide loading indicator after creation
-        if (responseJson.status === "success") {
-          console.log("Created note:", responseJson.data); // Debugging log
+        loadingIndicator.style.display = 'none'; // Hide loading indicator after creation
+        if (responseJson.status === 'success') {
+          console.log('Created note:', responseJson.data); // Debugging log
           return responseJson.data; // Return the newly created note
         } else {
-          throw new Error("Failed to create note");
+          throw new Error(responseJson.message || 'Failed to create note');
         }
       })
       .catch((error) => {
-        loadingIndicator.style.display = "none"; // Hide loading indicator on error
-        console.error("Error creating note:", error);
+        loadingIndicator.style.display = 'none'; // Hide loading indicator on error
+        console.error('Error creating note:', error);
         return null;
       });
   }

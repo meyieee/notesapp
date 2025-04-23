@@ -1,7 +1,9 @@
+import NotesApi from './notes-api.js';
+
 class NoteForm extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
@@ -60,14 +62,14 @@ class NoteForm extends HTMLElement {
       <form id="noteForm">
         <input type="text" id="title" placeholder="Judul Catatan" required />
         <textarea id="body" placeholder="Isi Catatan" required></textarea>
-        <button type="submit" disabled>Tambah Catatan</button>
+        <button type="submit">Tambah Catatan</button>
       </form>
     `;
 
     // Grab the form, input elements, and button after the DOM is rendered
-    const titleInput = this.querySelector("#title");
-    const bodyInput = this.querySelector("#body");
-    const submitButton = this.querySelector("button");
+    const titleInput = this.shadowRoot.querySelector('#title');
+    const bodyInput = this.shadowRoot.querySelector('#body');
+    const submitButton = this.shadowRoot.querySelector('button');
 
     // Enable/disable submit button based on input validity
     const validateForm = () => {
@@ -77,42 +79,41 @@ class NoteForm extends HTMLElement {
     };
 
     // Real-time validation on input change
-    titleInput.addEventListener("input", validateForm);
-    bodyInput.addEventListener("input", validateForm);
+    titleInput.addEventListener('input', validateForm);
+    bodyInput.addEventListener('input', validateForm);
 
     // Handle form submission
-    this.querySelector("#noteForm").addEventListener(
-      "submit",
-      this.handleSubmit
-    );
+    this.shadowRoot
+      .querySelector('#noteForm')
+      .addEventListener('submit', this.handleSubmit.bind(this));
   }
 
   handleSubmit(event) {
     event.preventDefault();
 
-    const titleInput = this.querySelector("#title");
-    const bodyInput = this.querySelector("#body");
+    const titleInput = this.shadowRoot.querySelector('#title');
+    const bodyInput = this.shadowRoot.querySelector('#body');
 
     const newNote = {
       title: titleInput.value,
       body: bodyInput.value,
     };
 
-    console.log("Form Submitted. New Note:", newNote); // Debugging log
+    console.log('Form Submitted. New Note:', newNote); // Debugging log
 
     if (newNote.title.trim() && newNote.body.trim()) {
       // Show loading indicator before sending the request
-      const loadingIndicator = document.getElementById("loadingIndicator");
-      loadingIndicator.style.display = "block";
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      loadingIndicator.style.display = 'block';
 
       NotesApi.createNote(newNote)
         .then((createdNote) => {
-          console.log("Note Created:", createdNote); // Debugging log
+          console.log('Note Created:', createdNote); // Debugging log
 
           if (createdNote) {
             // Dispatch the new note to update the UI
             this.dispatchEvent(
-              new CustomEvent("new-note", {
+              new CustomEvent('new-note', {
                 detail: createdNote,
                 bubbles: true,
                 composed: true,
@@ -120,18 +121,18 @@ class NoteForm extends HTMLElement {
             );
 
             // Clear inputs after note creation
-            titleInput.value = "";
-            bodyInput.value = "";
+            titleInput.value = '';
+            bodyInput.value = '';
           }
         })
         .catch((error) => {
-          console.error("Error creating note:", error);
+          console.error('Error creating note:', error);
         })
         .finally(() => {
-          loadingIndicator.style.display = "none"; // Hide loading indicator after submission
+          loadingIndicator.style.display = 'none'; // Hide loading indicator after submission
         });
     }
   }
 }
 
-customElements.define("note-form", NoteForm);
+customElements.define('note-form', NoteForm);
