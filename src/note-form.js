@@ -1,10 +1,13 @@
 class NoteForm extends HTMLElement {
-  connectedCallback() {
+  constructor() {
+    super();
     this.attachShadow({ mode: "open" });
+  }
 
-    // Add the form HTML and styling
+  connectedCallback() {
     this.shadowRoot.innerHTML = `
       <style>
+        /* Your existing CSS remains unchanged */
         form {
           background-color: #fff;
           padding: 20px;
@@ -44,25 +47,24 @@ class NoteForm extends HTMLElement {
           transition: background-color 0.3s ease, transform 0.2s ease;
           grid-column: 1;
         }
+        form button:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
         form button:hover {
           background-color: #43a047;
           transform: translateY(-2px);
         }
-        .error {
-          color: red;
-          font-size: 0.9rem;
-        }
       </style>
-  
+
       <form id="noteForm">
         <input type="text" id="title" placeholder="Judul Catatan" required />
-        <span id="titleError" class="error"></span>
         <textarea id="body" placeholder="Isi Catatan" required></textarea>
-        <span id="bodyError" class="error"></span>
         <button type="submit" disabled>Tambah Catatan</button>
       </form>
     `;
 
+    // Grab the form, input elements, and button after the DOM is rendered
     const titleInput = this.querySelector("#title");
     const bodyInput = this.querySelector("#body");
     const submitButton = this.querySelector("button");
@@ -71,17 +73,7 @@ class NoteForm extends HTMLElement {
     const validateForm = () => {
       const isValidTitle = titleInput.value.trim().length > 0;
       const isValidBody = bodyInput.value.trim().length > 0;
-
-      // Toggle button disabled state
-      submitButton.disabled = !(isValidTitle && isValidBody);
-
-      // Show error messages if invalid
-      document.querySelector("#titleError").textContent = isValidTitle
-        ? ""
-        : "Title cannot be empty";
-      document.querySelector("#bodyError").textContent = isValidBody
-        ? ""
-        : "Body cannot be empty";
+      submitButton.disabled = !(isValidTitle && isValidBody); // Enable button when both fields are filled
     };
 
     // Real-time validation on input change
@@ -106,6 +98,8 @@ class NoteForm extends HTMLElement {
       body: bodyInput.value,
     };
 
+    console.log("Form Submitted. New Note:", newNote); // Debugging log
+
     if (newNote.title.trim() && newNote.body.trim()) {
       // Show loading indicator before sending the request
       const loadingIndicator = document.getElementById("loadingIndicator");
@@ -113,6 +107,8 @@ class NoteForm extends HTMLElement {
 
       NotesApi.createNote(newNote)
         .then((createdNote) => {
+          console.log("Note Created:", createdNote); // Debugging log
+
           if (createdNote) {
             // Dispatch the new note to update the UI
             this.dispatchEvent(
@@ -128,10 +124,11 @@ class NoteForm extends HTMLElement {
             bodyInput.value = "";
           }
         })
-        .catch((error) => console.error("Error creating note:", error))
+        .catch((error) => {
+          console.error("Error creating note:", error);
+        })
         .finally(() => {
-          // Hide loading indicator after submission
-          loadingIndicator.style.display = "none";
+          loadingIndicator.style.display = "none"; // Hide loading indicator after submission
         });
     }
   }
